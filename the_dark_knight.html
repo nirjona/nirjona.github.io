@@ -367,14 +367,27 @@
                       </div>
                   <!---
                       <button type="submit" class="btn btn-primary">Submit</button> -->
-                      <button type="submit" class="btn btn-primary";">Submit</button><br /><br>
-                      <button type="reset" class="btn btn-primary";">Reset</button>
+                      <button id="submitComment" type="submit" class="btn btn-primary";">Submit</button><br /><br>
+                      <!-- <button type="reset" class="btn btn-primary";">Reset</button> -->
                     </form>
+
+
+                    <!-- <div>
+                      <ul id="pastcomments"></ul>
+                    
+                    </div> -->
                   </div>
               
               
               </div>
+
+        <div>
+          <ul id="pastcomments"></ul>
+        
+        </div>
+
               </div>
+              
               </form>  
           
 
@@ -624,6 +637,91 @@
 
 
         <script src="./js/main.js"></script>
+    
+        <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-analytics.js"></script>
+        
+        
+        
+        
+        <!-- TODO: Add SDKs for Firebase products that you want to use
+                       https://firebase.google.com/docs/web/setup#available-libraries -->
+        <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-auth.js"></script>
+        
+        
+        <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-database.js"></script>
+
+
+
+
+
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+        
+        <!-- TODO: Add SDKs for Firebase products that you want to use
+             https://firebase.google.com/docs/web/setup#available-libraries -->
+        
+        <script>
+          // Your web app's Firebase configuration
+          var firebaseConfig = {
+            apiKey: "AIzaSyBhgEvY8lThRS-5bE4SXt7vII4VyoK6DIc",
+            authDomain: "comments2-dc2a5.firebaseapp.com",
+            databaseURL: "https://comments2-dc2a5.firebaseio.com",
+            projectId: "comments2-dc2a5",
+            storageBucket: "comments2-dc2a5.appspot.com",
+            messagingSenderId: "761430464038",
+            appId: "1:761430464038:web:bd52e7fa708a8d72e2b8e7"
+          };
+          // Initialize Firebase
+          firebase.initializeApp(firebaseConfig);
+
+          //Rootref is the whole database.
+            const rootRef = firebase.database().ref();
+            //commentsRef is just the pageCountsNode
+            const commentsRef = rootRef.child('comments');
+            //Listen for click on Submit Comment button, and post comment.
+            document.getElementById("submitComment").addEventListener("click", function () {
+              //Replace line breaks in comment with br tags.
+              var newcomment = document.getElementById('message').value.replace(/\n/g, "<br>");
+              //Define a new, keyed post.
+              var newPostRef = commentsRef.push();
+              //Fill tne new keyed post with data
+              newPostRef.set({
+                name: document.getElementById('name').value.trim(),
+                comment: newcomment.trim(),
+                frompage: location.pathname,
+                when: firebase.database.ServerValue.TIMESTAMP
+              });
+            });
+
+
+
+            function showpastcomments() {
+              var showat = document.getElementById('pastcomments');
+              //Get comments whose from page equals this page's pathname.
+              var commentsRef = firebase.database().ref('comments/').orderByChild('frompage').equalTo(location.pathname);
+              commentsRef.once('value', function (snapshot) {
+                snapshot.forEach(function (itemSnapshot) {
+                  //Get the object for one snapshot
+                  var itemData = itemSnapshot.val();
+                  var comment = itemData.comment;
+                  var name = itemData.name;
+                  var when = new Date(itemData.when).toLocaleDateString("en-us");
+                  showat.innerHTML += "<li>" + comment + "<span> -- " + name + " (" + when +
+                    ")</span></li>";
+                })
+              })
+            }
+            showpastcomments()
+            firebase.analytics();
+         
+
+
+
+
+        </script>
+
+
+
 
       </body>
       </html>
