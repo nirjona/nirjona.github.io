@@ -1,0 +1,10 @@
+/* Small overrides on top of the Wowchemy theme CSS (loaded in index.html). */
+
+/* Fixed navbar: keep anchored sections from hiding under it */
+section[id] {
+  scroll-margin-top: 70px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
