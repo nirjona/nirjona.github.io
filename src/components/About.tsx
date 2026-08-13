@@ -45,15 +45,19 @@ export default function About() {
                 alt={profile.name}
               />
               <div className="portrait-title">
-                <h2>{profile.name}</h2>
-                <h3>{profile.role}</h3>
-                <h3>
+                {/* The name is the page's <h1>. Role and organisation are not
+                    headings — they don't introduce sections — so they're <p>. */}
+                <h1>{profile.name}</h1>
+                <p className="portrait-role">{profile.role}</p>
+                <p className="portrait-role">
                   <a href={profile.organization.url} target="_blank" rel="noopener">
                     <span>{profile.organization.name}</span>
                   </a>
-                </h3>
+                </p>
               </div>
-              <ul className="network-icon" aria-hidden="true">
+              {/* Was aria-hidden="true", which hid three keyboard-focusable
+                  links from screen readers (axe: aria-hidden-focus). */}
+              <ul className="network-icon" aria-label="Contact and profiles">
                 {profile.social.map((s) => (
                   <li key={s.label}>
                     <a

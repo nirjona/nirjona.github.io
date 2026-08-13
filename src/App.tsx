@@ -18,7 +18,7 @@ export default function App() {
   return (
     <>
       <Navbar activeId={activeId} />
-      <div className="page-body">
+      <main className="page-body" id="main">
         <About />
         <Research />
         <Experience />
@@ -26,8 +26,8 @@ export default function App() {
         <Awards />
         <Skills />
         <Activities />
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </>
   )
 }
