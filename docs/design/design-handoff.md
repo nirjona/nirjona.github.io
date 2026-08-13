@@ -10,7 +10,7 @@
 
 | File | Change | Lines |
 |---|---|---|
-| `src/custom.css` | The design layer — tokens, `@font-face`, overrides | +712 |
+| `src/custom.css` | The design layer — tokens, `@font-face`, overrides | +735 |
 | `index.html` | Dropped the Google Fonts request, preload the two first-paint faces, `theme-color` → `#14539a` | ±27 |
 | `public/fonts/*.woff2` | 5 vendored font files | new |
 | `src/App.tsx` | `<div className="page-body">` → `<main id="main">`; `Footer` moved outside it | ±6 |
@@ -67,12 +67,23 @@ Root is normalised to **16px** (`html { font-size: 16px }`) — the theme pins i
 
 | Token | Computed | Family | Weight | Applied to |
 |---|---|---|---|---|
-| `--text-xs` | 13px | sans | 500/600 | Buttons, `EDUCATION`/`INTERESTS` labels |
-| `--text-sm` | 14px | sans | 400/500 | Nav links, dates, company, citation authors, footer |
-| `--text-base` | 16px | sans | 400 | Body copy, bullets, interests |
-| `--text-md` | 17px | **serif** | 600 | Card titles, publication titles |
-| `--text-lg` | 20px | **serif** | 600 | Section titles |
-| `--text-xl` | 28px | **serif** | 600 | Name |
+| `--text-xs` | 14px | sans | 500/600 | Buttons, `EDUCATION`/`INTERESTS` labels |
+| `--text-sm` | 15px | sans | 400/500 | Nav links, dates, company, citation authors, footer |
+| `--text-base` | 17px | sans | 400 | Body copy, card bullets, interests |
+| `--text-md` | 18px | **serif** | 600 | Card titles, publication titles |
+| `--text-lg` | 21px | **serif** | 600 | Section titles |
+| `--text-xl` | 29px | **serif** | 600 | Name |
+
+To resize the page again, change these six numbers. Changing `html { font-size }` instead scales the px-based tokens (`--nav-h`, avatar, dot sizes) along with the type, which is usually not what you want.
+
+**The theme actively fights font-size overrides**, so several of these need `!important`:
+
+| Theme rule | Effect | Override |
+|---|---|---|
+| `.section-subheading { font-size: 1rem !important }` | Pinned every card title and the `EDUCATION`/`INTERESTS` labels to 16px regardless of specificity | `--text-md` / `--text-xs`, `!important` |
+| `.experience .card-text, .experience .card-text p { font-size: .75rem !important; color: #000 !important }` | **Pinned all card body copy to 12px** — experience bullets, project descriptions. `.card.experience.course` means it hit Projects and Awards too | `--text-base` + `--ink-700`, `!important` |
+
+That second one was the smallest text on the page and it carried the actual substance of every role and project.
 
 **Families**
 
@@ -85,7 +96,7 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 
 **Line height:** `--leading-tight: 1.25` (headings) · `--leading-snug: 1.45` (titles, metadata) · `--leading-body: 1.65` (prose)
 
-**Measure:** `--measure: 68ch` on top-level prose. Bio goes 830px / 83ch → 686px / 69ch at 1440px. Scoped to `#about .article-style > p` so it doesn't cap text already constrained by a card.
+**Measure:** `--measure: 68ch` on top-level prose. Bio goes 830px / 83ch → 729px / 66ch at 1440px (`ch` scales with font size, so the measure tracks the type). Scoped to `#about .article-style > p` so it doesn't cap text already constrained by a card.
 
 ### Spacing — 4px base
 
@@ -111,8 +122,8 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 ### Navbar
 
 - 64px min-height, `rgba(255,255,255,.92)` + `backdrop-filter: blur(8px)`, 1px `--rule` bottom border, no shadow
-- Brand: serif 17px/600 `--ink-900`
-- Link: sans 14px/500 `--ink-500`, 8px/12px padding, transparent 2px bottom border
+- Brand: serif 18px/600 `--ink-900`
+- Link: sans 15px/500 `--ink-500`, 8px/12px padding, transparent 2px bottom border
 - Hover: `--ink-900`
 - **Active: `--ink-900` + 2px `--accent` bottom border** — was colour-only
 - Focus-visible: 2px `--accent` outline, 2px offset
@@ -123,7 +134,7 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 
 - `--space-section` vertical padding, `!important` to beat the components' inline `style={{ padding: '30px 0 30px 0' }}`
 - Flat `--surface` throughout; `.home-section + .home-section` gets a 1px `--rule` top border. Replaces the alternating `#f7f7f7` bands — which is also what clears the two contrast failures, since `rgba(0,0,0,.54)` was compositing to 4.49:1 over grey
-- Title: serif 20px/600, `inline-block`, 12px bottom padding, **2px `--ink-900` underline**
+- Title: serif 21px/600, `inline-block`, 12px bottom padding, **2px `--ink-900` underline**
 - `position: sticky; top: 96px` at ≥992px — the title column is 400px wide and mostly empty, so it may as well hold the title in view while you read the section
 - Left-aligned at all widths (theme centred it below 992px)
 - `scroll-margin-top: 80px`
@@ -132,22 +143,22 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 
 - 1px `--rule` border, 6px radius, **no shadow**; border → `--rule-strong` on hover
 - Body padding `--space-card-y` / `--space-card-x`; 16px between cards
-- **Title: serif 17px/600 `--ink-900`** — the hierarchy fix. Needs `!important` to beat `.text-muted { color: rgba(0,0,0,.54) !important }`
-- Company: sans 14px/500 `--ink-500`
-- Meta: sans 14px/400 `--ink-500`
-- Body: sans 16px/400 `--ink-700`, 1.65; markers `--ink-300`
+- **Title: serif 18px/600 `--ink-900`** — the hierarchy fix. Needs `!important` to beat `.text-muted { color: rgba(0,0,0,.54) !important }`
+- Company: sans 15px/500 `--ink-500`
+- Meta: sans 15px/400 `--ink-500`
+- Body: sans 17px/400 `--ink-700`, 1.65; markers `--ink-300`. Was 12px, pinned by a theme `!important`
 
 ### Publication list item
 
 - Hairline-separated rows, 24px vertical padding, 32px left indent for the icon; first item flush top, last has no rule
 - Icon absolutely positioned, `--ink-300`
-- **Title: serif 17px/600 `--ink-900`, no resting underline.** Underline appears on hover/focus. It's set apart from the surrounding sans citation by typeface, size, weight *and* colour, so it isn't signalled by colour alone (WCAG 1.4.1)
-- Authors: sans 14px `--ink-500`; your name `600` + `--ink-900`
+- **Title: serif 18px/600 `--ink-900`, no resting underline.** Underline appears on hover/focus. It's set apart from the surrounding sans citation by typeface, size, weight *and* colour, so it isn't signalled by colour alone (WCAG 1.4.1)
+- Authors: sans 15px `--ink-500`; your name `600` + `--ink-900`
 - Venue: `--ink-500`, italic, `font-weight: 500` — was `<em><strong>`, i.e. italic + bold + serif for one field
 
 ### Button (`.btn-page-header`)
 
-- sans 13px/500 `--accent`, transparent fill, 1px `--rule-strong` border, 6px radius
+- sans 14px/500 `--accent`, transparent fill, 1px `--rule-strong` border, 6px radius
 - 6px/12px padding, **32px min-height** (was 25px)
 - Hover: `--accent-wash` fill, `--accent` border, `--accent-hover` text
 - `@media (pointer: coarse)`: **44px min-height**, 10px/16px padding
@@ -175,7 +186,7 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 
 ### Footer
 
-- 1px `--rule` top border, 32px padding, centred, sans 14px `--ink-500`
+- 1px `--rule` top border, 32px padding, centred, sans 15px `--ink-500`
 
 ---
 
@@ -292,13 +303,14 @@ social: [
 |---|---|
 | `tsc -b` | ✅ clean |
 | `oxlint` | ✅ clean, exit 0 |
-| `npm run build` | ✅ CSS 12.1 kB → 3.0 kB gzipped |
+| `npm run build` | ✅ CSS 12.9 kB → 3.1 kB gzipped |
 | axe-core WCAG 2.1 A/AA + best-practice | ✅ **0 violations, 35 passes** (was 3 violations) |
 | Heading outline | ✅ `h1: Tasnim Fariha` → six `h2` section titles (was six `h1`, no page title) |
 | Contrast, all 8 text tokens | ✅ AA; 6 of 8 also AAA |
 | Font loading | ✅ `Inter Variable` + `Source Serif 4 Variable` resolve; **0 requests to fonts.googleapis.com**; `latin-ext` faces correctly not fetched |
 | Touch targets | Buttons 25→32px (44px coarse), social links 20→44px, nav toggler 44×44 |
-| Measure | 83ch → 69ch at 1440px |
+| Measure | 83ch → 66ch at 1440px |
+| Every rendered font size | ✅ audited via `getComputedStyle` against the token table — 16 elements checked |
 | Keyboard focus | ✅ 2px `#14539a` ring on tab, verified on nav links |
 | Scroll-spy | ✅ highlights `Activities` at `#activities` |
 | Nav drawer at 390px | ✅ 7 items, left-border active marker |
