@@ -115,7 +115,7 @@
   --leading-body: 1.65;
 
   /* Ink — all values below are AA-verified against their backgrounds */
-  --ink-900: #16191d;     /* headings, card titles       */
+  --ink-900: #16191d;     /* strong body emphasis        */
   --ink-700: #2f343b;     /* body copy                   */
   --ink-500: #5b6470;     /* metadata, secondary         */
   --ink-300: #8b93a0;     /* decorative only, never text */
@@ -125,6 +125,15 @@
   --surface-sunken: #fafbfc;
   --rule: #e4e7ec;        /* hairlines, card borders     */
   --rule-strong: #cfd4dc;
+
+  /* Titles — Oxford ink. Every title on the page uses this: the name, the
+     section titles, card titles, publication titles, the Skills/Activities
+     row labels. Deliberately 1.9x darker than --accent so a title never
+     reads as a link, and vice versa; 14.57:1 on white (AAA).
+     --title-weight is a separate knob so you can dial the boldness without
+     touching the colour. */
+  --title: #0e2a47;
+  --title-weight: 700;
 
   /* Accent — one blue, used consistently. Was #1565c0 / #2962ff mixed. */
   --accent: #14539a;
@@ -179,7 +188,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
-  color: var(--ink-900);
+  color: var(--title);
   line-height: var(--leading-tight);
   letter-spacing: -0.005em;
 }
@@ -227,12 +236,12 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + var(--space-4)); }
 .section-heading h2 {
   font-family: var(--font-serif);
   font-size: var(--text-lg) !important; /* beats theme !important */
-  font-weight: 600;
-  color: var(--ink-900);
+  font-weight: var(--title-weight);
+  color: var(--title);
   letter-spacing: 0.01em;
   margin: 0 0 var(--space-3) 0;
   padding-bottom: var(--space-3);
-  border-bottom: 2px solid var(--ink-900);
+  border-bottom: 2px solid var(--title);
   display: inline-block;
 }
 
@@ -260,9 +269,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + var(--space-4)); }
 .navbar-brand {
   font-family: var(--font-serif);
   font-size: 1.0625rem;
-  font-weight: 600;
+  font-weight: var(--title-weight);
   letter-spacing: 0.01em;
-  color: var(--ink-900);
+  color: var(--title);
 }
 
 .navbar-light .navbar-brand:hover,
@@ -333,8 +342,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + var(--space-4)); }
 .portrait-title h2 {
   font-family: var(--font-serif);
   font-size: var(--text-xl);
-  font-weight: 600;
-  color: var(--ink-900);
+  font-weight: var(--title-weight);
+  color: var(--title);
   letter-spacing: -0.01em;
   margin: var(--space-5) 0 var(--space-2);
 }
@@ -379,7 +388,7 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + var(--space-4)); }
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-500);
+  color: var(--title);
   margin-top: var(--space-6);
   margin-bottom: var(--space-3);
 }
@@ -435,9 +444,9 @@ ul.ul-interests li {
 .pub-list-item > a {
   font-family: var(--font-serif);
   font-size: var(--text-md);
-  font-weight: 600;
+  font-weight: var(--title-weight);
   line-height: var(--leading-snug);
-  color: var(--ink-900);
+  color: var(--title);
   /* No resting underline: the title is already set apart from the sans-serif
      citation around it by typeface, size, weight and colour, so it is not
      signalled by colour alone (WCAG 1.4.1). Underline on hover/focus. */
@@ -488,16 +497,16 @@ ul.ul-interests li {
 .card .section-subheading.exp-title {
   font-family: var(--font-serif);
   font-size: var(--text-md) !important; /* beats theme !important */
-  font-weight: 600;
+  font-weight: var(--title-weight);
   letter-spacing: 0;
   text-transform: none;
   line-height: var(--leading-snug);
-  color: var(--ink-900) !important; /* beats .text-muted !important */
+  color: var(--title) !important; /* beats .text-muted !important */
   margin: 0 0 var(--space-1);
 }
 
 .card .section-subheading a {
-  color: var(--ink-900);
+  color: var(--title);
   border-bottom: 1px solid var(--rule-strong);
 }
 .card .section-subheading a:hover {
@@ -677,8 +686,8 @@ button:focus-visible,
 
 #skills .col-lg-8 > p strong,
 #activities .col-lg-8 > p strong {
-  font-weight: 600;
-  color: var(--ink-900);
+  font-weight: var(--title-weight);
+  color: var(--title);
 }
 
 #activities .col-lg-8 > p a {
