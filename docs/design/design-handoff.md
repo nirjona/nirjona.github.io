@@ -1,6 +1,6 @@
 # Design Handoff: Research Portfolio — Design Layer v1
 
-**Status:** applied to the working tree on `main`. Not committed — review, then commit or `git checkout` to revert.
+**Status:** committed on branch `design/typography-and-hierarchy`. Not pushed.
 **Approach:** an override layer on top of `public/css/wowchemy.css`, plus four small component fixes. The theme is untouched.
 **Verified against:** Chromium 1440×900 and 390×844, axe-core 4.x (0 violations), `tsc -b` and `oxlint` clean, WCAG 2.1 AA contrast computed per pair.
 
@@ -10,7 +10,7 @@
 
 | File | Change | Lines |
 |---|---|---|
-| `src/custom.css` | The design layer — tokens, `@font-face`, overrides | +735 |
+| `src/custom.css` | The design layer — tokens, `@font-face`, overrides | +745 |
 | `index.html` | Dropped the Google Fonts request, preload the two first-paint faces, `theme-color` → `#14539a` | ±27 |
 | `public/fonts/*.woff2` | 5 vendored font files | new |
 | `src/App.tsx` | `<div className="page-body">` → `<main id="main">`; `Footer` moved outside it | ±6 |
@@ -46,7 +46,9 @@ All exposed as custom properties on `:root`. Change a value here, not in a rule.
 
 | Token | Value | Use | Contrast on `--surface` |
 |---|---|---|---|
-| `--ink-900` | `#16191d` | Headings, card titles, publication titles | 17.63:1 ✅ AAA |
+| `--title` | `#0e2a47` | **Every title** — name, nav brand, section titles, card titles, publication titles, Skills/Activities row labels, EDUCATION/INTERESTS labels | 14.57:1 ✅ AAA |
+| `--title-weight` | `700` | Boldness knob for all of the above, separate from the colour | — |
+| `--ink-900` | `#16191d` | Strong body emphasis (your name inside citations) | 17.63:1 ✅ AAA |
 | `--ink-700` | `#2f343b` | Body copy, list items | 12.54:1 ✅ AAA |
 | `--ink-500` | `#5b6470` | Metadata, dates, company, section labels | 6.00:1 ✅ AA |
 | `--ink-300` | `#8b93a0` | Icons, list markers — **decorative only, never text** | 3.10:1 |
@@ -61,6 +63,8 @@ All exposed as custom properties on `:root`. Change a value here, not in a rule.
 
 One accent, replacing the `#1565c0` / `#2962ff` split. Every text pair passes AA; all but two pass AAA.
 
+**Titles vs links.** `--title` (#0e2a47) is Oxford ink — clearly blue, but 1.90× darker than `--accent` (#14539a) and set at weight 700 against the links' 400. Titles that *are* links (publication, project and award titles) sit at `--title` and shift to `--accent` on hover, so the colour move is what signals clickability rather than the resting state. Your own name inside a citation stays `--ink-900` — it's emphasis, not a title, and keeping it neutral stops the author line competing with the paper title next to it.
+
 ### Type
 
 Root is normalised to **16px** (`html { font-size: 16px }`) — the theme pins it to 18px, which inflates every rem in the stack by 12.5%.
@@ -70,9 +74,9 @@ Root is normalised to **16px** (`html { font-size: 16px }`) — the theme pins i
 | `--text-xs` | 14px | sans | 500/600 | Buttons, `EDUCATION`/`INTERESTS` labels |
 | `--text-sm` | 15px | sans | 400/500 | Nav links, dates, company, citation authors, footer |
 | `--text-base` | 17px | sans | 400 | Body copy, card bullets, interests |
-| `--text-md` | 18px | **serif** | 600 | Card titles, publication titles |
-| `--text-lg` | 21px | **serif** | 600 | Section titles |
-| `--text-xl` | 29px | **serif** | 600 | Name |
+| `--text-md` | 18px | **serif** | 700 | Card titles, publication titles |
+| `--text-lg` | 21px | **serif** | 700 | Section titles |
+| `--text-xl` | 29px | **serif** | 700 | Name |
 
 To resize the page again, change these six numbers. Changing `html { font-size }` instead scales the px-based tokens (`--nav-h`, avatar, dot sizes) along with the type, which is usually not what you want.
 
@@ -122,7 +126,7 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 ### Navbar
 
 - 64px min-height, `rgba(255,255,255,.92)` + `backdrop-filter: blur(8px)`, 1px `--rule` bottom border, no shadow
-- Brand: serif 18px/600 `--ink-900`
+- Brand: serif 17px/700 `--title`
 - Link: sans 15px/500 `--ink-500`, 8px/12px padding, transparent 2px bottom border
 - Hover: `--ink-900`
 - **Active: `--ink-900` + 2px `--accent` bottom border** — was colour-only
@@ -134,7 +138,7 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 
 - `--space-section` vertical padding, `!important` to beat the components' inline `style={{ padding: '30px 0 30px 0' }}`
 - Flat `--surface` throughout; `.home-section + .home-section` gets a 1px `--rule` top border. Replaces the alternating `#f7f7f7` bands — which is also what clears the two contrast failures, since `rgba(0,0,0,.54)` was compositing to 4.49:1 over grey
-- Title: serif 21px/600, `inline-block`, 12px bottom padding, **2px `--ink-900` underline**
+- Title: serif 21px/700 `--title`, `inline-block`, 12px bottom padding, **2px `--title` underline**
 - `position: sticky; top: 96px` at ≥992px — the title column is 400px wide and mostly empty, so it may as well hold the title in view while you read the section
 - Left-aligned at all widths (theme centred it below 992px)
 - `scroll-margin-top: 80px`
@@ -143,7 +147,7 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 
 - 1px `--rule` border, 6px radius, **no shadow**; border → `--rule-strong` on hover
 - Body padding `--space-card-y` / `--space-card-x`; 16px between cards
-- **Title: serif 18px/600 `--ink-900`** — the hierarchy fix. Needs `!important` to beat `.text-muted { color: rgba(0,0,0,.54) !important }`
+- **Title: serif 18px/700 `--title`** — the hierarchy fix. Needs `!important` to beat `.text-muted { color: rgba(0,0,0,.54) !important }`
 - Company: sans 15px/500 `--ink-500`
 - Meta: sans 15px/400 `--ink-500`
 - Body: sans 17px/400 `--ink-700`, 1.65; markers `--ink-300`. Was 12px, pinned by a theme `!important`
@@ -152,7 +156,7 @@ The `<Name> Variable` names match the `@font-face` blocks; the plain names are k
 
 - Hairline-separated rows, 24px vertical padding, 32px left indent for the icon; first item flush top, last has no rule
 - Icon absolutely positioned, `--ink-300`
-- **Title: serif 18px/600 `--ink-900`, no resting underline.** Underline appears on hover/focus. It's set apart from the surrounding sans citation by typeface, size, weight *and* colour, so it isn't signalled by colour alone (WCAG 1.4.1)
+- **Title: serif 18px/700 `--title`, no resting underline.** Hover → `--accent`. Underline appears on hover/focus. It's set apart from the surrounding sans citation by typeface, size, weight *and* colour, so it isn't signalled by colour alone (WCAG 1.4.1)
 - Authors: sans 15px `--ink-500`; your name `600` + `--ink-900`
 - Venue: `--ink-500`, italic, `font-weight: 500` — was `<em><strong>`, i.e. italic + bold + serif for one field
 
@@ -306,7 +310,8 @@ social: [
 | `npm run build` | ✅ CSS 12.9 kB → 3.1 kB gzipped |
 | axe-core WCAG 2.1 A/AA + best-practice | ✅ **0 violations, 35 passes** (was 3 violations) |
 | Heading outline | ✅ `h1: Tasnim Fariha` → six `h2` section titles (was six `h1`, no page title) |
-| Contrast, all 8 text tokens | ✅ AA; 6 of 8 also AAA |
+| Contrast, all 9 text tokens | ✅ AA; `--title` at 14.57:1 (AAA) |
+| Title vs link separation | ✅ 1.90:1 between `--title` and `--accent`, plus 700 vs 400 weight |
 | Font loading | ✅ `Inter Variable` + `Source Serif 4 Variable` resolve; **0 requests to fonts.googleapis.com**; `latin-ext` faces correctly not fetched |
 | Touch targets | Buttons 25→32px (44px coarse), social links 20→44px, nav toggler 44×44 |
 | Measure | 83ch → 66ch at 1440px |
