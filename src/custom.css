@@ -1,10 +1,714 @@
-/* Small overrides on top of the Wowchemy theme CSS (loaded in index.html). */
+/* ============================================================================
+   Tasnim Fariha — research portfolio
+   Design layer: tokens + targeted overrides on top of the Wowchemy theme CSS
+   (public/css/wowchemy.css, loaded in index.html).
 
-/* Fixed navbar: keep anchored sections from hiding under it */
-section[id] {
-  scroll-margin-top: 70px;
+   This file is additive. Deleting it restores the stock theme exactly.
+
+   NOTE ON !important
+   ------------------
+   The theme ships a lot of `!important` and the section components carry an
+   inline `style={{ padding: '30px 0 30px 0' }}`. Inline styles beat any
+   stylesheet rule, so a handful of overrides below must use `!important` to
+   win. Each one is marked with `/* beats inline *\/` or `/* beats theme *\/`.
+   ========================================================================= */
+
+/* ---------------------------------------------------------------- fonts */
+
+/* Self-hosted variable fonts, served from public/fonts/ on your own origin —
+   no render-blocking round trip to fonts.googleapis.com, no npm dependency,
+   nothing to install. The files came from @fontsource-variable (SIL OFL 1.1);
+   only the weight-axis latin subsets are vendored, 280 KB total, of which a
+   typical visitor downloads ~99 KB (the two latin faces).
+
+   This replaces the Montserrat + Roboto + Roboto Mono <link> in index.html —
+   three families, of which Roboto Mono was applied to zero elements and Roboto
+   only ever sat 4th in a fallback chain behind the system stack.
+
+   font-display: swap — text paints immediately in the fallback and reflows
+   once the webfont lands, rather than blocking on it. */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* latin-ext covers diacritics in author names — Müller, Šimon, Łukasz. Only
+   fetched when the page actually contains one of these codepoints. */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+/* True italic for publication venues — better than a synthesised oblique */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-wght-italic.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7,
+    U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+/* ---------------------------------------------------------------- tokens */
+
+:root {
+  /* Type families. The "<Name> Variable" names match the @font-face blocks
+     above; the plain names are kept as a fallback so a Google Fonts <link>
+     would also work if you ever switch back to CDN loading. */
+  --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Charter, Georgia,
+    'Times New Roman', serif;
+  --font-sans: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Type scale — 1.200 minor third, 16px base */
+  --text-xs: 0.8125rem;   /* 13px  — captions, badges            */
+  --text-sm: 0.875rem;    /* 14px  — metadata, timeline dates    */
+  --text-base: 1rem;      /* 16px  — body                        */
+  --text-md: 1.0625rem;   /* 17px  — card titles                 */
+  --text-lg: 1.25rem;     /* 20px  — section titles              */
+  --text-xl: 1.75rem;     /* 28px  — name                        */
+
+  --leading-tight: 1.25;
+  --leading-snug: 1.45;
+  --leading-body: 1.65;
+
+  /* Ink — all values below are AA-verified against their backgrounds */
+  --ink-900: #16191d;     /* headings, card titles       */
+  --ink-700: #2f343b;     /* body copy                   */
+  --ink-500: #5b6470;     /* metadata, secondary         */
+  --ink-300: #8b93a0;     /* decorative only, never text */
+
+  /* Surface */
+  --surface: #ffffff;
+  --surface-sunken: #fafbfc;
+  --rule: #e4e7ec;        /* hairlines, card borders     */
+  --rule-strong: #cfd4dc;
+
+  /* Accent — one blue, used consistently. Was #1565c0 / #2962ff mixed. */
+  --accent: #14539a;
+  --accent-hover: #0f3f76;
+  --accent-wash: #eef3fa;
+  --focus: #14539a;
+
+  /* Spacing — 4px base */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --space-section: 4.5rem;   /* vertical padding inside each section */
+  --space-card-y: 1.25rem;
+  --space-card-x: 1.5rem;
+
+  --radius: 6px;
+  --nav-h: 64px;
+  --measure: 68ch;           /* max line length for prose */
+}
+
+/* ------------------------------------------------------------- base type */
+
+/* The theme pins the root at 18px, which makes every rem in the stack 12.5%
+   larger than it reads. Normalising to 16px puts the scale below on a
+   predictable base and tightens the whole page by one notch. */
 html {
+  font-size: 16px;
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  color: var(--ink-700);
+  background: var(--surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  color: var(--ink-900);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.005em;
+}
+
+p { margin-bottom: var(--space-4); }
+p:last-child { margin-bottom: 0; }
+
+/* Prose gets a bounded measure. 68ch ≈ 640px — roughly 12 words a line,
+   which is where reading speed peaks. The theme let the bio run to ~95
+   characters at 1440px, which is where the eye starts losing its place on
+   the return sweep.
+
+   Scoped to top-level prose only: text inside a card is already constrained
+   by the card, and capping it again leaves a dead strip on the right. */
+#about .article-style > p,
+#about .article-style > ul,
+#about .article-style > ol {
+  max-width: var(--measure);
+}
+
+/* -------------------------------------------------------------- sections */
+
+/* Flat white throughout with hairline dividers, replacing the theme's
+   alternating #f7f7f7 bands. Bands chunk the page but they also make it
+   read as a template; a 1px rule does the same job more quietly. */
+.home-section,
+.home-section:nth-of-type(even) {
+  background: var(--surface);
+  padding: var(--space-section) 0 !important; /* beats inline */
+}
+
+.home-section + .home-section {
+  border-top: 1px solid var(--rule);
+}
+
+section[id] { scroll-margin-top: calc(var(--nav-h) + var(--space-4)); }
+
+/* Section title: small, spaced, serif, and sticky so it stays with its
+   content on the way down. Uses the empty left gutter instead of fighting it. */
+.section-heading {
+  align-items: flex-start !important; /* beats .align-items-center on mobile */
+}
+
+.section-heading h1,
+.section-heading h2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg) !important; /* beats theme !important */
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: 0.01em;
+  margin: 0 0 var(--space-3) 0;
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--ink-900);
+  display: inline-block;
+}
+
+@media (min-width: 992px) {
+  .section-heading {
+    position: sticky;
+    top: calc(var(--nav-h) + var(--space-6));
+    align-self: flex-start;
+  }
+}
+
+/* ---------------------------------------------------------------- navbar */
+
+#navbar-main {
+  min-height: var(--nav-h);
+  padding: 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(1.4) blur(8px);
+  -webkit-backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--rule);
+  box-shadow: none;
+}
+
+.navbar-light .navbar-brand,
+.navbar-brand {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink-900);
+}
+
+.navbar-light .navbar-brand:hover,
+.navbar-light .navbar-brand:focus { color: var(--accent); }
+
+.navbar-light .navbar-nav .nav-link {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink-500);
+  padding: var(--space-2) var(--space-3);
+  margin: 0 var(--space-1);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link:focus { color: var(--ink-900); }
+
+/* Active state was colour-only. Add a rule so it survives colour-blindness
+   and low-contrast displays. */
+.navbar-light .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .active > .nav-link {
+  color: var(--ink-900) !important; /* beats theme !important */
+  border-bottom-color: var(--accent);
+}
+
+.navbar-toggler {
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.6rem;
+  color: var(--ink-700);
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* In the collapsed drawer the links are full-width blocks, so a bottom border
+   on the active item spans the whole row and reads as a divider rather than a
+   marker. Move the rule to the leading edge. */
+@media (max-width: 991.98px) {
+  .navbar-collapse .navbar-nav { padding: var(--space-2) 0 var(--space-3); }
+
+  .navbar-light .navbar-nav .nav-link {
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 0;
+    border-left: 2px solid transparent;
+  }
+
+  .navbar-light .navbar-nav .nav-link.active,
+  .navbar-light .navbar-nav .active > .nav-link {
+    border-bottom-color: transparent;
+    border-left-color: var(--accent);
+    background: var(--accent-wash);
+  }
+}
+
+/* ------------------------------------------------------------- about/bio */
+
+.wg-about .avatar,
+.avatar.avatar-circle {
+  width: 176px;
+  height: 176px;
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+.portrait-title h1,
+.portrait-title h2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.01em;
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+.portrait-title h3,
+.portrait-title .portrait-role {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--ink-500);
+  margin: 0 0 var(--space-1);
+  letter-spacing: 0.01em;
+}
+
+#profile .network-icon { margin-top: var(--space-5); }
+
+.network-icon li { margin-right: var(--space-4); }
+
+/* 44px touch target without changing the visual icon size */
+.network-icon li a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--ink-500);
+  transition: color 0.15s ease;
+}
+
+.network-icon li a:hover { color: var(--accent); }
+.network-icon li:hover { transform: none; } /* theme scaled the whole li */
+
+.network-icon .big-icon { font-size: 1.25rem; }
+
+/* Education / Interests sub-blocks */
+.section-subheading {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+
+ul.ul-edu li { padding: 0 var(--space-4) var(--space-3) var(--space-1); }
+ul.ul-edu li .description p.course {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--ink-900);
+  line-height: var(--leading-snug);
+}
+ul.ul-edu li .description p.institution {
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+}
+ul.ul-edu .fa-li { color: var(--ink-300); }
+
+ul.ul-interests li {
+  font-size: var(--text-base);
+  color: var(--ink-700);
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-2);
+}
+
+/* ---------------------------------------------------------- publications */
+
+/* Publications are the reason a researcher is on this page, so they get the
+   most structure: a hairline-separated list, dark serif titles, and authors
+   in sans so the highlighted name pops without bold-on-bold. */
+.pub-list-item {
+  position: relative;
+  margin-bottom: 0 !important; /* beats inline */
+  padding: var(--space-5) 0 var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--text-sm);
+  color: var(--ink-500);
+  line-height: var(--leading-snug);
+}
+
+.pub-list-item:first-child { padding-top: 0; }
+.pub-list-item:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.pub-list-item .pub-icon {
+  position: absolute;
+  left: 0;
+  top: var(--space-5);
+  color: var(--ink-300);
+  font-size: 1rem;
+}
+.pub-list-item:first-child .pub-icon { top: 0.2rem; }
+
+/* Title link — the strongest thing in the item */
+.pub-list-item > a {
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  color: var(--ink-900);
+  /* No resting underline: the title is already set apart from the sans-serif
+     citation around it by typeface, size, weight and colour, so it is not
+     signalled by colour alone (WCAG 1.4.1). Underline on hover/focus. */
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.pub-list-item > a:hover,
+.pub-list-item > a:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.pub-list-item .li-cite-author { color: var(--ink-500); }
+.article-metadata .author-highlighted {
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+/* Venue was <em><strong> — italic + bold + serif is three signals for one
+   piece of metadata. Keep the italic, drop the bold. */
+.pub-list-item em strong { font-weight: 500; }
+.pub-list-item em { color: var(--ink-500); }
+
+.pub-list-item > p { margin: var(--space-3) 0 0; }
+
+/* ------------------------------------------------------------------ cards */
+
+.card {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: none;
+  background: var(--surface);
+  transition: border-color 0.15s ease;
+}
+
+.card:hover { border-color: var(--rule-strong); }
+
+.card .card-body { padding: var(--space-card-y) var(--space-card-x); }
+
+.card.experience.course { margin-bottom: var(--space-4); }
+.card.experience.course:last-child { margin-bottom: 0; }
+
+/* THE hierarchy fix. Card titles were .text-muted — lighter than the body
+   text underneath them, which inverts the reading order. */
+.card .section-subheading,
+.card .section-subheading.exp-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: var(--leading-snug);
+  color: var(--ink-900) !important; /* beats .text-muted !important */
+  margin: 0 0 var(--space-1);
+}
+
+.card .section-subheading a {
+  color: var(--ink-900);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.card .section-subheading a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.card .section-subheading.exp-company {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink-500) !important; /* beats .text-muted !important */
+  margin: 0 0 var(--space-2);
+}
+
+.card .section-subheading.exp-company a { border-bottom: 0; color: var(--ink-500); }
+.card .section-subheading.exp-company a:hover { color: var(--accent); }
+
+.exp-meta,
+.card .article-metadata {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--ink-500) !important; /* beats .text-muted !important */
+  margin-bottom: 0;
+}
+
+.card .card-text.article-style { margin-top: var(--space-3); }
+
+.card .card-text ul {
+  padding-left: var(--space-4);
+  margin-bottom: 0;
+}
+
+.card .card-text li {
+  margin-bottom: var(--space-2);
+  line-height: var(--leading-body);
+  color: var(--ink-700);
+}
+.card .card-text li:last-child { margin-bottom: 0; }
+.card .card-text li::marker { color: var(--ink-300); }
+
+/* --------------------------------------------------------- experience rail */
+
+.row.experience { margin-bottom: 0; }
+.row.experience .col.py-2 { padding-top: var(--space-2) !important; padding-bottom: var(--space-2) !important; }
+
+/* Theme paints the rail #1565c0. A saturated blue line running down an
+   otherwise empty gutter pulls the eye away from the cards; the rail is
+   structure, not content. Neutral rail, accent reserved for the current role.
+   Selector must match the theme's `.experience .col.border-right` to win. */
+.experience .col.border-right { border-color: var(--rule) !important; }
+
+.experience .badge-pill.border {
+  background: var(--surface);
+  border: 2px solid var(--rule-strong) !important;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* Current role gets the filled dot */
+.experience .badge-pill.exp-fill {
+  background: var(--accent);
+  border-color: var(--accent) !important;
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.btn-outline-primary.btn-page-header {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 0.375rem 0.75rem;
+  min-height: 32px;
+  margin: 0 var(--space-2) var(--space-2) 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-outline-primary.btn-page-header:hover,
+.btn-outline-primary.btn-page-header:focus {
+  color: var(--accent-hover);
+  background: var(--accent-wash);
+  border-color: var(--accent);
+  box-shadow: none;
+}
+
+/* Coarse pointers get the full 44px target */
+@media (pointer: coarse) {
+  .btn-outline-primary.btn-page-header {
+    min-height: 44px;
+    padding: 0.625rem 1rem;
+  }
+}
+
+/* ------------------------------------------------------------------ links */
+
+/* In-prose links were distinguished by colour alone (WCAG 1.4.1). Underline
+   them. Links inside cards/nav/buttons keep their own treatment above. */
+.article-style a,
+.home-section.light a,
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.article-style a {
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 0.15s ease, color 0.15s ease;
+}
+
+.article-style a:hover {
+  color: var(--accent-hover);
+  text-decoration-color: currentColor;
+}
+
+/* Visible focus ring for keyboard users — the theme relied on the browser
+   default, which the reset partially suppressed. */
+a:focus-visible,
+button:focus-visible,
+.nav-link:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.middot-divider {
+  color: var(--ink-300);
+  font-size: inherit;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+}
+
+/* -------------------------------------------------- skills / activities */
+
+/* These render as bare <p> with a leading <strong>. Turn each into a
+   labelled row so the categories line up and scan vertically. */
+#skills .col-lg-8 > p,
+#activities .col-lg-8 > p {
+  max-width: var(--measure);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-700);
+  line-height: var(--leading-snug);
+}
+
+#skills .col-lg-8 > p:last-child,
+#activities .col-lg-8 > p:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+#skills .col-lg-8 > p strong,
+#activities .col-lg-8 > p strong {
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+#activities .col-lg-8 > p a {
+  font-size: var(--text-sm);
+  color: var(--accent);
+}
+
+/* ----------------------------------------------------------------- footer */
+
+.site-footer {
+  border-top: 1px solid var(--rule);
+  padding: var(--space-6) 0;
+  margin-top: 0;
+  color: var(--ink-500);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.site-footer .powered-by { margin: 0; }
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 991.98px) {
+  :root {
+    --space-section: 3rem;
+    --space-card-x: 1.125rem;
+  }
+
+  .section-heading h1,
+.section-heading h2 { margin-bottom: var(--space-4); }
+
+  /* Theme centres the profile block; keep it centred but tighten it */
+  #profile { text-align: center; }
+  #profile .portrait-title h1,
+.portrait-title h2 { margin-top: var(--space-4); }
+}
+
+@media (max-width: 575.98px) {
+  :root { --space-section: 2.5rem; }
+  .wg-about .avatar, .avatar.avatar-circle { width: 132px; height: 132px; }
+  .pub-list-item { padding-left: var(--space-5); }
+}
+
+/* -------------------------------------------------------------- printing */
+
+@media print {
+  #navbar-main, .navbar-toggler { display: none; }
+  .home-section { padding: var(--space-4) 0 !important; }
+  .section-heading { position: static; }
+  a { color: var(--ink-900); }
 }

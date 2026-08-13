@@ -8,12 +8,31 @@
       name="description"
       content="Software Engineer & Researcher — computer vision, deep learning and autonomous vehicles."
     />
-    <meta name="theme-color" content="#1565c0" />
+    <meta name="theme-color" content="#14539a" />
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Fonts are self-hosted from /fonts (see @font-face in src/custom.css).
+      The previous Montserrat + Roboto + Roboto Mono request to
+      fonts.googleapis.com is gone: Roboto Mono was never applied to any
+      element, Roboto only sat 4th in a fallback chain behind the system
+      stack, and Montserrat is fully replaced by Source Serif 4.
+
+      Preload the two faces that are needed for first paint so they start
+      downloading in parallel with the stylesheets rather than after them.
+    -->
     <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap"
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/inter-latin-wght-normal.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/source-serif-4-latin-wght-normal.woff2"
+      crossorigin
     />
     <link
       rel="stylesheet"

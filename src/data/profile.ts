@@ -304,6 +304,7 @@ export const profile = {
     { label: 'Projects', target: 'projects' },
     { label: 'Awards', target: 'accomplishments' },
     { label: 'Skills', target: 'skills' },
+    { label: 'Activities', target: 'activities' },
   ],
 
   copyrightYear: 2026,
