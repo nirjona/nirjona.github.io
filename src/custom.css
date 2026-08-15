@@ -1,20 +1,3 @@
-/* ============================================================================
-   Tasnim Fariha — research portfolio
-   Design layer: tokens + targeted overrides on top of the Wowchemy theme CSS
-   (public/css/wowchemy.css, loaded in index.html).
-
-   This file is additive. Deleting it restores the stock theme exactly.
-
-   NOTE ON !important
-   ------------------
-   The theme ships a lot of `!important` and the section components carry an
-   inline `style={{ padding: '30px 0 30px 0' }}`. Inline styles beat any
-   stylesheet rule, so a handful of overrides below must use `!important` to
-   win. Each one is marked with `/* beats inline *\/` or `/* beats theme *\/`.
-   ========================================================================= */
-
-/* ---------------------------------------------------------------- fonts */
-
 /* Self-hosted variable fonts, served from public/fonts/ on your own origin —
    no render-blocking round trip to fonts.googleapis.com, no npm dependency,
    nothing to install. The files came from @fontsource-variable (SIL OFL 1.1);
@@ -126,13 +109,7 @@
   --rule: #e4e7ec;        /* hairlines, card borders     */
   --rule-strong: #cfd4dc;
 
-  /* Titles — Oxford ink. Every title on the page uses this: the name, the
-     section titles, card titles, publication titles, the Skills/Activities
-     row labels. Deliberately 1.9x darker than --accent so a title never
-     reads as a link, and vice versa; 14.57:1 on white (AAA).
-     --title-weight is a separate knob so you can dial the boldness without
-     touching the colour. */
-  --title: #0e2a47;
+  --title: #0a8177;
   --title-weight: 700;
 
   /* Accent — one blue, used consistently. Was #1565c0 / #2962ff mixed. */

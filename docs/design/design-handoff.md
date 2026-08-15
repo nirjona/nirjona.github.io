@@ -1,6 +1,5 @@
 # Design Handoff: Research Portfolio — Design Layer v1
 
-**Status:** committed on branch `design/typography-and-hierarchy`. Not pushed.
 **Approach:** an override layer on top of `public/css/wowchemy.css`, plus four small component fixes. The theme is untouched.
 **Verified against:** Chromium 1440×900 and 390×844, axe-core 4.x (0 violations), `tsc -b` and `oxlint` clean, WCAG 2.1 AA contrast computed per pair.
 
@@ -46,7 +45,7 @@ All exposed as custom properties on `:root`. Change a value here, not in a rule.
 
 | Token | Value | Use | Contrast on `--surface` |
 |---|---|---|---|
-| `--title` | `#0e2a47` | **Every title** — name, nav brand, section titles, card titles, publication titles, Skills/Activities row labels, EDUCATION/INTERESTS labels | 14.57:1 ✅ AAA |
+| `--title` | `#0a8177` | **Every title** — name, nav brand, section titles, card titles, publication titles, Skills/Activities row labels, EDUCATION/INTERESTS labels | 4.75:1 ✅ AA |
 | `--title-weight` | `700` | Boldness knob for all of the above, separate from the colour | — |
 | `--ink-900` | `#16191d` | Strong body emphasis (your name inside citations) | 17.63:1 ✅ AAA |
 | `--ink-700` | `#2f343b` | Body copy, list items | 12.54:1 ✅ AAA |
@@ -63,7 +62,18 @@ All exposed as custom properties on `:root`. Change a value here, not in a rule.
 
 One accent, replacing the `#1565c0` / `#2962ff` split. Every text pair passes AA; all but two pass AAA.
 
-**Titles vs links.** `--title` (#0e2a47) is Oxford ink — clearly blue, but 1.90× darker than `--accent` (#14539a) and set at weight 700 against the links' 400. Titles that *are* links (publication, project and award titles) sit at `--title` and shift to `--accent` on hover, so the colour move is what signals clickability rather than the resting state. Your own name inside a citation stays `--ink-900` — it's emphasis, not a title, and keeping it neutral stops the author line competing with the paper title next to it.
+**Titles vs links.** `--title` (#0a8177, bright teal) and `--accent` (#14539a, blue) are different hues as well as different weights (700 vs 400), so a title never reads as a link. Titles that *are* links (publication, project and award titles) sit at `--title` and shift to `--accent` on hover. Your own name inside a citation stays `--ink-900` — it's emphasis, not a title, and keeping it neutral stops the author line competing with the paper title beside it.
+
+**Why #0a8177 and not something brighter.** The smallest titles — card and publication titles at 18px bold — need 4.5:1, because 18px bold sits just under the 18.66px threshold where WCAG relaxes to 3:1. #0a8177 is the brightest teal in this hue that clears that bar (4.75:1). Brighter options, with what they cost:
+
+| Hex | Contrast | Trade-off |
+|---|---|---|
+| `#0a8177` | 4.75:1 | **current** — AA everywhere |
+| `#0b857b` | 4.51:1 | brightest that still passes AA everywhere |
+| `#0d8b80` | 4.18:1 | fails AA on 18px card/publication titles |
+| `#0d9488` | 3.74:1 | clearly brighter, fails AA on anything under 18.66px |
+
+The name (29px) and section titles (21px bold) count as large text and only need 3:1, so they stay compliant at any of these. The full list is in a comment above the token.
 
 ### Type
 
@@ -310,8 +320,8 @@ social: [
 | `npm run build` | ✅ CSS 12.9 kB → 3.1 kB gzipped |
 | axe-core WCAG 2.1 A/AA + best-practice | ✅ **0 violations, 35 passes** (was 3 violations) |
 | Heading outline | ✅ `h1: Tasnim Fariha` → six `h2` section titles (was six `h1`, no page title) |
-| Contrast, all 9 text tokens | ✅ AA; `--title` at 14.57:1 (AAA) |
-| Title vs link separation | ✅ 1.90:1 between `--title` and `--accent`, plus 700 vs 400 weight |
+| Contrast, all 9 text tokens | ✅ AA; `--title` at 4.75:1, the tightest pair on the page |
+| Title vs link separation | ✅ different hue (teal vs blue) plus 700 vs 400 weight |
 | Font loading | ✅ `Inter Variable` + `Source Serif 4 Variable` resolve; **0 requests to fonts.googleapis.com**; `latin-ext` faces correctly not fetched |
 | Touch targets | Buttons 25→32px (44px coarse), social links 20→44px, nav toggler 44×44 |
 | Measure | 83ch → 66ch at 1440px |
